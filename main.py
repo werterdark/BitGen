@@ -5,9 +5,7 @@ from discord_webhook import DiscordWebhook
 import argparse
 import os
 from colorama import init
-
 init()
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "-t",
@@ -43,24 +41,17 @@ parser.add_argument(
     "--discord",
     help="send a discord notification."
 )
-
 args = parser.parse_args()
 lock = threading.Lock()
-
-
 class bcolors:
     GREEN = "\033[92m"  # GREEN
     YELLOW = "\033[93m"  # YELLOW
     RED = "\033[91m"  # RED
     RESET = "\033[0m"  # RESET COLOR
-
-
 def makeDir():
     path = "results"
     if not os.path.exists(path):
         os.makedirs(path)
-
-
 def main():
     with lock:
         while True:
@@ -75,9 +66,7 @@ def main():
                             w.write(
                                 f"Address: {addr} | Balance: {balance} | Private key: {prv}\n"
                             )
-
                     print(f"{bcolors.RED}{addr} : {prv} : {balance} BTC")
-
                 else:
                     with open("results/moist.txt", "a") as w:
                         w.write(
@@ -92,10 +81,13 @@ def main():
                         f"Address: {addr} | Balance: {balance} | Private key: {prv} | Last seen: {last_seen_bc(addr)}\n"
                     )
                     if args.discord:
-                        webhook = DiscordWebhook(url=args.discord, rate_limit_retry=True, content=f'@everyone Address: {addr} | Balance: {balance} | Private key: {prv}')
+                        webhook = DiscordWebhook(url=args.discord,
+                                                 rate_limit_retry=True,
+                                                 content=f'@everyone Address: {addr} | '
+                                                         f'Balance: {balance} | '
+                                                         f'Private key: {prv}')
                         response = webhook.execute()
                 print(f"{last_seen_bc(addr)} {bcolors.GREEN} : {balance} : {prv} : {addr}")
-
 
 if __name__ == "__main__":
     makeDir()
